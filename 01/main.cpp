@@ -148,6 +148,9 @@ int main(int argc, const char * argv[]) {
                     return 1;
                 int b = calculator.top();
                 calculator.pop();
+                if(a == 0)
+                     return 1;
+                   
                 calculator.push(b/a);
             }
             else if (curr_lexeme.op_type_ == SUB)
