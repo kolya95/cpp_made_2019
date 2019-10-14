@@ -14,5 +14,8 @@ main: main.o lexeme_parser.o
 test: lexeme_parser.o main.o
 	$(CC) -o main main.o lexeme_parser.o
 	python test.py
+run: lexeme_parser.o main.o
+	$(CC) -o main main.o lexeme_parser.o
+	./main
 clean:
 	rm -rf *.o main

@@ -15,11 +15,19 @@ using namespace std;
 
 
 int main(int argc, const char * argv[]) {
-    if (argc != 2){
+    if (argc > 2){
         return 1;
     }
+    std::string calc = "";
+    if (argc == 2)
+    {
+        calc = argv[1];
+    }
+    else{
+        cin>>calc;
+    }
     
-    std::string calc = argv[1];
+    
     
     if (calc.length() == 0)
         return 1;
