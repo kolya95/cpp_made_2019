@@ -33,9 +33,13 @@ int main(int argc, const char * argv[]) {
         parser.create_polis();
         std::cout << parser.calculate();
     } catch (const std::exception& e) {
+        std::cout<<e.what() << std::endl;
         return 1;
     }
+    catch (...) {
+        std::cout << "Unknown error" << std::endl;
+        return -1;
+    }
 
-    
     return 0;
 }
