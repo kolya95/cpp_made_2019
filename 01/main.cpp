@@ -30,9 +30,10 @@ int main(int argc, const char * argv[]) {
     
     LexemeParser parser = LexemeParser(calc);
     try {
+        parser.create_polis();
         std::cout << parser.calculate();
-    } catch (int i) {
-        return i;
+    } catch (const std::exception& e) {
+        return 1;
     }
 
     

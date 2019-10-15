@@ -6,8 +6,6 @@
 //  Copyright © 2019 Николай Попов. All rights reserved.
 //
 #include "lexeme_parser.h"
-#include <vector>
-#include <stack>
 
 Lexeme LexemeParser::get_next_lexeme()
 {
@@ -132,16 +130,14 @@ Lexeme LexemeParser::get_next_lexeme()
 };
 
 
-int LexemeParser::calculate(){
-    std::vector<Lexeme> POLIS;
-    std::stack<Lexeme> OPERATIONS;
-    
+
+void LexemeParser::create_polis(){
     Lexeme curr_lexeme = Lexeme(BEGIN, NOT_OPERATION, 0, 0);
     while (curr_lexeme.lex_type_ != END)
     {
         curr_lexeme = get_next_lexeme();
         if (curr_lexeme.lex_type_ == ERROR)
-            throw 1;
+            throw std::runtime_error("unknown lexeme");
         
         
         if(curr_lexeme.lex_type_ == NUMBER)
@@ -181,28 +177,30 @@ int LexemeParser::calculate(){
                     else
                     {
                         if (OPERATIONS.empty())
-                            throw 1;
+                            throw std::runtime_error("brackets is not in pairs");
                         POLIS.push_back(OPERATIONS.top());
                         OPERATIONS.pop();
                     }
 
                 }
                 if (!flag)
-                    throw 1;
+                    throw std::runtime_error("brackets is not in pairs");
             }
         }
     }
     while (not OPERATIONS.empty())
     {
         if (OPERATIONS.top().lex_type_ == BRACKET)
-            throw 1;
+            throw std::runtime_error("brackets is not in pairs");
         POLIS.push_back(OPERATIONS.top());
         OPERATIONS.pop();
     }
-        
-    std::stack<int> calculator;
-    
-    
+
+}
+
+int LexemeParser::calculate(){
+    Lexeme curr_lexeme = Lexeme(BEGIN, NOT_OPERATION, 0, 0);
+
     for(int i = 0; i<POLIS.size(); i++)
     {
         curr_lexeme = POLIS[i];
@@ -212,15 +210,15 @@ int LexemeParser::calculate(){
         else if (curr_lexeme.lex_type_ == OPERATION){
             
             if(calculator.empty())
-                throw 1;
-
+                throw std::runtime_error("operation has no argument");
+            
             if (curr_lexeme.op_type_ == ADD)
             {
                 int a = calculator.top();
                 calculator.pop();
                 
                 if(calculator.empty())
-                    throw 1;
+                    throw std::runtime_error("operation has no argument");
                 int b = calculator.top();
                 calculator.pop();
                 calculator.push(a+b);
@@ -232,7 +230,7 @@ int LexemeParser::calculate(){
                 calculator.pop();
                 
                 if(calculator.empty())
-                    throw 1;
+                    throw std::runtime_error("operation has no argument");
                 int b = calculator.top();
                 calculator.pop();
                 calculator.push(a*b);
@@ -244,11 +242,11 @@ int LexemeParser::calculate(){
                 calculator.pop();
                 
                 if(calculator.empty())
-                    throw 1;
+                    throw std::runtime_error("operation has no argument");
                 int b = calculator.top();
                 calculator.pop();
                 if(a == 0)
-                     throw 1;
+                    throw std::runtime_error("zero division error");
                    
                 calculator.push(b/a);
             }
@@ -257,7 +255,7 @@ int LexemeParser::calculate(){
                 int a = calculator.top();
                 calculator.pop();
                 if(calculator.empty())
-                    throw 1;
+                    throw std::runtime_error("operation has no argument");
                 
                 
                 int b = calculator.top();
@@ -275,6 +273,6 @@ int LexemeParser::calculate(){
         
     }
     if(calculator.size() > 1)
-        throw 1;
+        throw std::runtime_error("not enough operations");
     return calculator.top();
 }

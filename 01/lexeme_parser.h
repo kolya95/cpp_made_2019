@@ -11,7 +11,9 @@
 #include <stdlib.h>
 #include <string>
 #include <ctype.h>
-
+#include <vector>
+#include <stack>
+#include <stdexcept>
 
 enum LexType{
     NUMBER,
@@ -54,7 +56,10 @@ public:
     size_t curr_position;
     
     Lexeme prev_lexeme = Lexeme(BEGIN, NOT_OPERATION, 0, 0);
-    
+    std::stack<int> calculator;
+    std::vector<Lexeme> POLIS;
+    std::stack<Lexeme> OPERATIONS;
+
     int curr_state;
     
     LexemeParser(const std::string& buf_){
@@ -68,6 +73,7 @@ public:
     
     Lexeme get_next_lexeme();
     int calculate();
+    void create_polis();
 };
 
 
