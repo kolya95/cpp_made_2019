@@ -27,7 +27,14 @@ int main(int argc, const char * argv[]) {
     
     if (calc.length() == 0)
         return 1;
+    
     LexemeParser parser = LexemeParser(calc);
-    std::cout << parser.calculate();
+    try {
+        std::cout << parser.calculate();
+    } catch (int i) {
+        return i;
+    }
+
+    
     return 0;
 }

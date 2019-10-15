@@ -6,7 +6,6 @@
 //  Copyright © 2019 Николай Попов. All rights reserved.
 //
 #include "lexeme_parser.h"
-#include <stdlib.h>
 #include <vector>
 #include <stack>
 
@@ -142,7 +141,7 @@ int LexemeParser::calculate(){
     {
         curr_lexeme = get_next_lexeme();
         if (curr_lexeme.lex_type_ == ERROR)
-            exit(1);
+            throw 1;
         
         
         if(curr_lexeme.lex_type_ == NUMBER)
@@ -182,21 +181,21 @@ int LexemeParser::calculate(){
                     else
                     {
                         if (OPERATIONS.empty())
-                            exit(1);
+                            throw 1;
                         POLIS.push_back(OPERATIONS.top());
                         OPERATIONS.pop();
                     }
 
                 }
                 if (!flag)
-                    exit(-1);
+                    throw 1;
             }
         }
     }
     while (not OPERATIONS.empty())
     {
         if (OPERATIONS.top().lex_type_ == BRACKET)
-            exit(2);
+            throw 1;
         POLIS.push_back(OPERATIONS.top());
         OPERATIONS.pop();
     }
@@ -213,7 +212,7 @@ int LexemeParser::calculate(){
         else if (curr_lexeme.lex_type_ == OPERATION){
             
             if(calculator.empty())
-                exit(1);
+                throw 1;
 
             if (curr_lexeme.op_type_ == ADD)
             {
@@ -221,7 +220,7 @@ int LexemeParser::calculate(){
                 calculator.pop();
                 
                 if(calculator.empty())
-                    exit(1);
+                    throw 1;
                 int b = calculator.top();
                 calculator.pop();
                 calculator.push(a+b);
@@ -233,7 +232,7 @@ int LexemeParser::calculate(){
                 calculator.pop();
                 
                 if(calculator.empty())
-                    exit(1);
+                    throw 1;
                 int b = calculator.top();
                 calculator.pop();
                 calculator.push(a*b);
@@ -245,11 +244,11 @@ int LexemeParser::calculate(){
                 calculator.pop();
                 
                 if(calculator.empty())
-                    exit( 1);
+                    throw 1;
                 int b = calculator.top();
                 calculator.pop();
                 if(a == 0)
-                     exit( 1);
+                     throw 1;
                    
                 calculator.push(b/a);
             }
@@ -258,7 +257,7 @@ int LexemeParser::calculate(){
                 int a = calculator.top();
                 calculator.pop();
                 if(calculator.empty())
-                    exit(1);
+                    throw 1;
                 
                 
                 int b = calculator.top();
@@ -276,6 +275,6 @@ int LexemeParser::calculate(){
         
     }
     if(calculator.size() > 1)
-        exit( 1);
+        throw 1;
     return calculator.top();
 }
