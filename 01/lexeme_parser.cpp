@@ -6,7 +6,9 @@
 //  Copyright © 2019 Николай Попов. All rights reserved.
 //
 #include "lexeme_parser.h"
-
+#include <stdlib.h>
+#include <vector>
+#include <stack>
 
 Lexeme LexemeParser::get_next_lexeme()
 {
@@ -129,3 +131,151 @@ Lexeme LexemeParser::get_next_lexeme()
     
     return Lexeme(ERROR, NOT_OPERATION, 0, 0);
 };
+
+
+int LexemeParser::calculate(){
+    std::vector<Lexeme> POLIS;
+    std::stack<Lexeme> OPERATIONS;
+    
+    Lexeme curr_lexeme = Lexeme(BEGIN, NOT_OPERATION, 0, 0);
+    while (curr_lexeme.lex_type_ != END)
+    {
+        curr_lexeme = get_next_lexeme();
+        if (curr_lexeme.lex_type_ == ERROR)
+            exit(1);
+        
+        
+        if(curr_lexeme.lex_type_ == NUMBER)
+        {
+            POLIS.push_back(curr_lexeme);
+        }
+        else if (curr_lexeme.lex_type_ == OPERATION)
+        {
+            while( (not OPERATIONS.empty())
+                  && ((
+                      (OPERATIONS.top().priority_ >= curr_lexeme.priority_)
+                      && (OPERATIONS.top().op_type_ != UNARY_MINUS)
+                      )
+                  || ((OPERATIONS.top().priority_ > curr_lexeme.priority_) && (OPERATIONS.top().op_type_ == UNARY_MINUS)))
+                  )
+            {
+                POLIS.push_back(OPERATIONS.top());
+                OPERATIONS.pop();
+            }
+            OPERATIONS.push(curr_lexeme);
+        }
+        else if (curr_lexeme.lex_type_ == BRACKET)
+        {
+            if (curr_lexeme.op_type_ == BR_OPEN)
+                OPERATIONS.push(curr_lexeme);
+            else if (curr_lexeme.op_type_ == BR_CLOSE)
+            {
+                bool flag = false;
+                while ((not OPERATIONS.empty()))
+                {
+                    if (OPERATIONS.top().op_type_ == BR_OPEN)
+                    {
+                        OPERATIONS.pop();
+                        flag = true;
+                        break;
+                    }
+                    else
+                    {
+                        if (OPERATIONS.empty())
+                            exit(1);
+                        POLIS.push_back(OPERATIONS.top());
+                        OPERATIONS.pop();
+                    }
+
+                }
+                if (!flag)
+                    exit(-1);
+            }
+        }
+    }
+    while (not OPERATIONS.empty())
+    {
+        if (OPERATIONS.top().lex_type_ == BRACKET)
+            exit(2);
+        POLIS.push_back(OPERATIONS.top());
+        OPERATIONS.pop();
+    }
+        
+    std::stack<int> calculator;
+    
+    
+    for(int i = 0; i<POLIS.size(); i++)
+    {
+        curr_lexeme = POLIS[i];
+        
+        if (curr_lexeme.lex_type_ == NUMBER)
+            calculator.push(curr_lexeme.value_);
+        else if (curr_lexeme.lex_type_ == OPERATION){
+            
+            if(calculator.empty())
+                exit(1);
+
+            if (curr_lexeme.op_type_ == ADD)
+            {
+                int a = calculator.top();
+                calculator.pop();
+                
+                if(calculator.empty())
+                    exit(1);
+                int b = calculator.top();
+                calculator.pop();
+                calculator.push(a+b);
+            }
+            
+            else if (curr_lexeme.op_type_ == MUL)
+            {
+                int a = calculator.top();
+                calculator.pop();
+                
+                if(calculator.empty())
+                    exit(1);
+                int b = calculator.top();
+                calculator.pop();
+                calculator.push(a*b);
+            }
+            
+            else if (curr_lexeme.op_type_ == DIV)
+            {
+                int a = calculator.top();
+                calculator.pop();
+                
+                if(calculator.empty())
+                    exit( 1);
+                int b = calculator.top();
+                calculator.pop();
+                if(a == 0)
+                     exit( 1);
+                   
+                calculator.push(b/a);
+            }
+            else if (curr_lexeme.op_type_ == SUB)
+            {
+                int a = calculator.top();
+                calculator.pop();
+                if(calculator.empty())
+                    exit(1);
+                
+                
+                int b = calculator.top();
+                calculator.pop();
+                calculator.push(b-a);
+            }
+            else if (curr_lexeme.op_type_ == UNARY_MINUS)
+            {
+                int a = calculator.top();
+                calculator.pop();
+                calculator.push(-a);
+            }
+        }
+        
+        
+    }
+    if(calculator.size() > 1)
+        exit( 1);
+    return calculator.top();
+}

@@ -67,7 +67,7 @@ public:
     }
     
     Lexeme get_next_lexeme();
-    
+    int calculate();
 };
 
 
