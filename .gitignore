@@ -1,0 +1,4 @@
+*.o
+.DS_store*
+01/main
+01/throw
