@@ -10,40 +10,50 @@
 #include  <stdlib.h>
 #include <exception>
 
-LinearAllocator::LinearAllocator(size_t maxSize)
+LinearAllocator::LinearAllocator(size_t maxSize) : max_size(maxSize), current_size(0)
 {
-    this->head = static_cast<char*>(malloc(maxSize));
-    this->current_head = this->head;
-    
-    this->current_size = 0;
-    this->max_size = maxSize;
-    this->allocated_ = this->current_head - this->head;
+    head = static_cast<char*>(malloc(maxSize));
+    if (head)
+    {
+        current_head = head;
+        allocated_ = current_head - head;
+    }
+    else{
+        head = nullptr;
+        current_head = nullptr;
+        max_size = 0;
+        allocated_ = 0;
+    }
 }
 
 LinearAllocator::~LinearAllocator()
 {
-    free(this->head);
+    if(head != nullptr)
+        free(head);
 }
 
 void LinearAllocator::reset()
 {
-    this->current_head = this->head;
-    this->current_size = 0;
-    this->allocated_ = this->current_head - this->head;
+    current_head = head;
+    current_size = 0;
+    allocated_ = current_head - head;
 }
-
 
 char* LinearAllocator::alloc(size_t size)
 {
-    char* return_ptr = this->current_head;
-    
-    if (size + this->current_size > this->max_size)
+    char* return_ptr = current_head;
+    if (size + current_size > max_size)
         return nullptr;
-
-    this->current_head = this->current_head + size;
-    
-    
-    this->allocated_ = this->current_head - this->head;
-    
+    current_head = current_head + size;
+    allocated_ = current_head - head;
     return return_ptr;
+}
+
+LinearAllocator::LinearAllocator(LinearAllocator&& other): head(other.head), current_head(other.current_head), allocated_(other.allocated_), max_size(other.max_size), current_size(other.current_size)
+{
+    other.head = nullptr;
+    other.max_size = 0;
+    other.current_size = 0;
+    other.current_head  = nullptr;
+    other.allocated_ = 0;
 }

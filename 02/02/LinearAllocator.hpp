@@ -23,8 +23,8 @@ public:
     LinearAllocator() = delete;
     LinearAllocator(const LinearAllocator& other) = delete;
     LinearAllocator& operator=(const LinearAllocator& other) = delete;
-    LinearAllocator(LinearAllocator&& other) = delete;
-    LinearAllocator& operator=(LinearAllocator&& other) = delete;
+    LinearAllocator(LinearAllocator&& other);
+    LinearAllocator& operator=(LinearAllocator&& other);
     
     ptrdiff_t allocated_;
 private:

@@ -63,6 +63,6 @@ int main(int argc, char* argv[])
             std::cout<<my_alloc.allocated_;
         }
     }
-    
+//    std::cout<<nullptr-nullptr;
     return 0;
 }
