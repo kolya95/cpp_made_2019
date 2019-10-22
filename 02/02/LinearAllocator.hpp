@@ -25,7 +25,8 @@ public:
     LinearAllocator& operator=(const LinearAllocator& other) = delete;
     LinearAllocator(LinearAllocator&& other) = delete;
     LinearAllocator& operator=(LinearAllocator&& other) = delete;
-
+    
+    ptrdiff_t allocated_;
 private:
     char* head;
     char* current_head;

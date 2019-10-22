@@ -38,25 +38,31 @@ int main(int argc, char* argv[])
 {
     size_t alloc_size_block = std::stoi(argv[1]);
     size_t allocator_maxsize = std::stoi(argv[2]);
-    std::cout<<"alloc size block: "<< alloc_size_block<<std::endl;
-    std::cout<<"allocator_maxsize: "<< allocator_maxsize<<std::endl;
-    
+//    std::cout<<"alloc size block: "<< alloc_size_block<<std::endl;
+//    std::cout<<"allocator_maxsize: "<< allocator_maxsize<<std::endl;
     LinearAllocator my_alloc(allocator_maxsize);
-     
+    
+    if (argc > 3) // time check
     {
-        Timer t;
-        for(int i = 0; i < 100000; i++)
         {
-            
-            char* tmp = my_alloc.alloc(alloc_size_block);
-            if (tmp == nullptr)
-                my_alloc.reset();
+            Timer t;
+            for(int i = 0; i < 100000; i++)
+            {
+                
+                char* tmp = my_alloc.alloc(alloc_size_block);
+                if (tmp == nullptr)
+                    my_alloc.reset();
+            }
         }
     }
-    
-    
-    std::cout<<"kek";
-    
+    else{
+        char* tmp = my_alloc.alloc(alloc_size_block);
+        if (tmp == nullptr)
+            std::cout<<"nullptr";
+        else{
+            std::cout<<my_alloc.allocated_;
+        }
+    }
     
     return 0;
 }

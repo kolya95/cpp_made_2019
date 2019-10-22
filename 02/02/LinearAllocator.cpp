@@ -17,6 +17,7 @@ LinearAllocator::LinearAllocator(size_t maxSize)
     
     this->current_size = 0;
     this->max_size = maxSize;
+    this->allocated_ = this->current_head - this->head;
 }
 
 LinearAllocator::~LinearAllocator()
@@ -28,6 +29,7 @@ void LinearAllocator::reset()
 {
     this->current_head = this->head;
     this->current_size = 0;
+    this->allocated_ = this->current_head - this->head;
 }
 
 
@@ -39,5 +41,9 @@ char* LinearAllocator::alloc(size_t size)
         return nullptr;
 
     this->current_head = this->current_head + size;
+    
+    
+    this->allocated_ = this->current_head - this->head;
+    
     return return_ptr;
 }
