@@ -45,6 +45,7 @@ char* LinearAllocator::alloc(size_t size)
     if (size + current_size > max_size)
         return nullptr;
     current_head = current_head + size;
+    current_size = current_size + size;
     allocated_ = current_head - head;
     return return_ptr;
 }
